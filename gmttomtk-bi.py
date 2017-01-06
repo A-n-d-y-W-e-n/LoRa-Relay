@@ -78,6 +78,7 @@ def establishCommandChannel():
     return s
 
 def waitAndExecuteCommand(commandChannel):
+    global dlmsg
     while True:
         command = commandChannel.recv(1024)
         logging.info("recv:" + command)
@@ -97,7 +98,7 @@ def waitAndExecuteCommand(commandChannel):
         #         commandValue = int(commandString)
         #         logging.info("led :%d" % commandValue)
         #         setFAN(commandValue)
-        
+
         if len(fields) > 1:
             timeStamp, dataChannelId, commandString = fields
             if dataChannelId == 'lora_led':
@@ -118,6 +119,7 @@ def on_connect(client, userdata, flags, rc):
 # The callback for when a PUBLISH message is received from the server.
 def on_message(client, userdata, msg):
     global dlmsg
+    print dlmsg
     if dlmsg == 1:
         client.publish("GIOT-GW/DL/1C497B498D80", payload=json.dumps(downlink_data), qos=0, retain=False)
         dlmsg = 0
@@ -141,7 +143,7 @@ def on_message(client, userdata, msg):
         response = urllib2.urlopen(req, json.dumps(mcs_data_format))
         # print(response)
 
-client = mqtt.Client(client_id="1C497B498D81", protocol=mqtt.MQTTv31)
+client = mqtt.Client(client_id="123", protocol=mqtt.MQTTv31)
 client.on_connect = on_connect
 client.on_message = on_message
 client.username_pw_set("lazyengineers", password="lazyengineers")

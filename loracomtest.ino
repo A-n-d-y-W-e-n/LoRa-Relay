@@ -70,27 +70,46 @@ void loop(){
   if(Serial1.read()){
     Serial.print(Serial1.read());
     Serial1.print("AT+DRX?");
+    if(Serial1.read() == 'led0'){
+      digitalWrite(13, LOW);
+      Serial.println("Switch LED OFF");
+    }
+
+    else if(Serial1.read() == 'led1'){
+      digitalWrite(13, HIGH);
+      Serial.println("Switch LED ON");
+    }
+
+    else if(Serial1.read() == 'fan0'){
+      digitalWrite(FAN_PORT, HIGH);
+      Serial.println("FAN OFF");
+    }
+
+    else if(Serial1.read() == 'fan1'){
+      digitalWrite(FAN_PORT, HIGH);
+      Serial.println("FAN ON");
+    }
   }
 
-  if(Serial1.read() == 'led0'){
-    digitalWrite(FAN_PORT, HIGH);
-    Serial.println("Light OFF");
-  }
-
-  if(Serial1.read() == 'led1'){
-    digitalWrite(FAN_PORT, HIGH);
-    Serial.println("Light ON");
-  }
-
-  if(Serial1.read() == 'fan0'){
-    digitalWrite(FAN_PORT, HIGH);
-    Serial.println("FAN OFF");
-  }
-
-  if(Serial1.read() == 'fan1'){
-    digitalWrite(FAN_PORT, HIGH);
-    Serial.println("FAN ON");
-  }
+  // if(Serial1.read() == 'led0'){
+  //   digitalWrite(13, LOW);
+  //   Serial.println("Switch LED OFF");
+  // }
+  //
+  // else if(Serial1.read() == 'led1'){
+  //   digitalWrite(13, HIGH);
+  //   Serial.println("Switch LED ON");
+  // }
+  //
+  // else if(Serial1.read() == 'fan0'){
+  //   digitalWrite(FAN_PORT, HIGH);
+  //   Serial.println("FAN OFF");
+  // }
+  //
+  // else if(Serial1.read() == 'fan1'){
+  //   digitalWrite(FAN_PORT, HIGH);
+  //   Serial.println("FAN ON");
+  // }
 
 	delay(1000);
 
