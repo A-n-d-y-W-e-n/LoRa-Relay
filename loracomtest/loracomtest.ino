@@ -130,6 +130,7 @@ void loop(){
   Serial.println("things 2-1");
 
 
+
 /*  while(Serial1.available()<=0){
     serial_delay_count++;
     delay(1000);
@@ -174,6 +175,34 @@ void loop(){
     Serial.print(temp_input);
     readbuffersize--;
   }
+
+  Serial1.print("AT+DRX?");
+
+  Serial.println("things 5");
+
+  while(Serial1.available()<=0){
+    serial_delay_count++;
+    delay(1000);
+    if(serial_delay_count == 10){
+      read_flag = 0;
+      serial_delay_count = 0;
+      break;
+    }
+  }
+
+  if(read_flag == 0){
+    read_flag = 1;
+  }else{
+    readbuffersize = Serial1.available();
+    Serial.print(readbuffersize);
+    while(readbuffersize){
+      temp_input = Serial1.read();
+      Serial.print(temp_input);
+      readbuffersize--;
+    }
+  }
+
+//  Serial1.print("AT+DRX?");
 
 //  Serial.println("things");
 
