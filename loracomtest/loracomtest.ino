@@ -12,6 +12,9 @@ char readcharbuffer[20];
 int readbuffersize;
 char temp_input;
 
+int serial_delay_count = 0;
+int read_flag = 1;
+
 void setup(){
   Serial.begin(9600);
   Serial1.begin(9600);
@@ -23,7 +26,7 @@ void setup(){
   Serial.print(DHTTYPE);
   Serial.println("test!");
 }
-
+/*
 void dl_msg(){
   if(Serial1.read()){
     Serial.print(Serial1.read());
@@ -48,9 +51,13 @@ void dl_msg(){
       Serial.println("FAN ON");
     }
   }
-}
+}*/
 
 void loop(){
+
+  Serial.println("Getting DHT temperature and humidity information.");
+  while(dht.read()<=0){
+  }
   if (dht.read()){
     tempC = dht.readTemperature();
     Humi = dht.readHumidity();
@@ -90,13 +97,72 @@ void loop(){
     //Serial1.println("AT+DTX=11,\"12345ABCdef\"");
   }
 
-  delay(1000);
+
+  Serial.println("things 1");
+  while(Serial1.available()<=0){
+    serial_delay_count++;
+    delay(1000);
+    if(serial_delay_count == 10){
+      read_flag = 0;
+      serial_delay_count = 0;
+      break;
+    }
+  }
+
+  Serial.println("things 2");
+  if(read_flag == 0){
+    read_flag = 1;
+  }else{
+    readbuffersize = Serial1.available();
+    Serial.print(readbuffersize);
+    while(readbuffersize){
+      temp_input = Serial1.read();
+      Serial.print(temp_input);
+      readbuffersize--;
+    }
+  }
+
+  Serial.println("things 2-1");
+
+
+/*  while(Serial1.available()<=0){
+    serial_delay_count++;
+    delay(1000);
+    if(serial_delay_count == 10){
+      Serial.println("No downlink Message available");
+      read_flag = 0;
+      serial_delay_count = 0;
+      break;
+    }
+  }
+
+  if(read_flag == 0){
+    read_flag = 1;
+  }else{
+    readbuffersize = Serial1.available();
+    Serial.print(readbuffersize);
+    while(readbuffersize){
+      temp_input = Serial1.read();
+      Serial.print(temp_input);
+      readbuffersize--;
+    }
+  }
 
   /*
   Serial.println("Ready to Send");
   Serial1.println("AT+DTX=11,\"12345ABCdef\"");
   delay(1000);*/
 
+  /*readbuffersize = Serial1.available();
+  while(readbuffersize){
+    temp_input = Serial1.read();
+    Serial.print(temp_input);
+    readbuffersize--;
+  }*/
+
+  delay(60000);
+
+  Serial.println("things 3");
   readbuffersize = Serial1.available();
   while(readbuffersize){
     temp_input = Serial1.read();
@@ -104,18 +170,9 @@ void loop(){
     readbuffersize--;
   }
 
-  delay(9000);
+//  Serial.println("things");
 
-  readbuffersize = Serial1.available();
-  while(readbuffersize){
-    temp_input = Serial1.read();
-    Serial.print(temp_input);
-    readbuffersize--;
-  }
+  delay(1000);
 
-  Serial.println("things");
-
-  delay(10000);
-
-  dl_msg();
+//  dl_msg();*/
 }
