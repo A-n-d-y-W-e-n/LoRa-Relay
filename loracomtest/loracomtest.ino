@@ -8,6 +8,7 @@
 LDHT dht(DHTPIN, DHTTYPE);
 
 float tempC = 0.0, Humi = 0.0;
+char temp_humi[8];
 char readcharbuffer[20];
 int readbuffersize;
 char temp_input;
@@ -83,15 +84,19 @@ void loop(){
     Serial.print(dht.readDewPoint(tempC, Humi));
     Serial.println("C");
 
+    sprintf(temp_humi,"%05.2f", Humi);
+    Serial.println(Humi);
+    Serial.println(temp_humi);
+
     Serial.println("Ready to Send");
     Serial.print("AT+DTX=11,\"T");
     Serial.print(dht.readHeatIndex(tempC, Humi));
-    Serial.print(dht.readHumidity());
+    Serial.print(temp_humi);
     Serial.println("\"");
 
     Serial1.print("AT+DTX=11,\"T");
     Serial1.print(dht.readHeatIndex(tempC, Humi));
-    Serial1.print(dht.readHumidity());
+    Serial1.print(temp_humi);
     Serial1.println("\"");
 
     //Serial1.println("AT+DTX=11,\"12345ABCdef\"");
