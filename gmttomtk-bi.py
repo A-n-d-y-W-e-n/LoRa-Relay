@@ -128,8 +128,7 @@ def on_message(client, userdata, msg):
     # print(json_extractor[0]['channel'])
     # print(json_extractor[0]['macAddr'])
     # print(json_extractor[0]['data'].decode("hex"))
-
-    if json_extractor[0]['macAddr'] == "000000000500005f":
+    if json_extractor[0]['macAddr'] == downlink_data[0]['macAddr']:
         string_value = json_extractor[0]['data'].decode("hex")
         # print(string_value[1:6])
         # print(string_value[6:11])
