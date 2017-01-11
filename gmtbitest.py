@@ -12,7 +12,7 @@ GIOT_ULTopic_prefix = "GIOT-GW/UL/"
 GIOT_DLTopic_prefix = "GIOT-GW/DL/"
 LAN_MAC = "1C497B498D80"
 LoRa_Wan_MAC = "00001c497b48db92"
-Target_node_MAC = "0000000005000023"
+Target_node_MAC = "000000000500005f"
 
 mcs_data_format = {
     "datapoints": [
@@ -58,6 +58,7 @@ def on_message(client, userdata, msg):
 
     if json_extractor[0]['macAddr'] == Target_node_MAC:
         print("we published")
+        downlink_data[0]['macAddr'] = Target_node_MAC
         downlink_data[0]['id'] = str(int(time.time()))
         client.publish(GIOT_DLTopic_prefix + LoRa_Wan_MAC, payload=json.dumps(downlink_data), qos=0, retain=False)
 

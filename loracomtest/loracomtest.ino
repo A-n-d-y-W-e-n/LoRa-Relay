@@ -27,32 +27,6 @@ void setup(){
   Serial.print(DHTTYPE);
   Serial.println("test!");
 }
-/*
-void dl_msg(){
-  if(Serial1.read()){
-    Serial.print(Serial1.read());
-    Serial1.print("AT+DRX?");
-    if(Serial1.read() == 'led0'){
-      digitalWrite(13, LOW);
-      Serial.println("Switch LED OFF");
-    }
-
-    else if(Serial1.read() == 'led1'){
-      digitalWrite(13, HIGH);
-      Serial.println("Switch LED ON");
-    }
-
-    else if(Serial1.read() == 'fan0'){
-      digitalWrite(FAN_PORT, HIGH);
-      Serial.println("FAN OFF");
-    }
-
-    else if(Serial1.read() == 'fan1'){
-      digitalWrite(FAN_PORT, HIGH);
-      Serial.println("FAN ON");
-    }
-  }
-}*/
 
 void loop(){
 
@@ -127,15 +101,14 @@ void loop(){
     }
   }
 
-  Serial.println("things 2-1");
+  Serial.println("End of Node response");
+  delay(1000);
 
-
-
-/*  while(Serial1.available()<=0){
+//Dectect there are dl packets or not
+  while(Serial1.available()<=0){
     serial_delay_count++;
     delay(1000);
     if(serial_delay_count == 10){
-      Serial.println("No downlink Message available");
       read_flag = 0;
       serial_delay_count = 0;
       break;
@@ -143,6 +116,7 @@ void loop(){
   }
 
   if(read_flag == 0){
+    Serial.println("No downlink Message available");
     read_flag = 1;
   }else{
     readbuffersize = Serial1.available();
@@ -152,23 +126,16 @@ void loop(){
       Serial.print(temp_input);
       readbuffersize--;
     }
+    //Wait until io is Ready
+    delay(5000);
+    //receiving message
+    Serial1.println("AT+DRX?");
   }
 
-  /*
-  Serial.println("Ready to Send");
-  Serial1.println("AT+DTX=11,\"12345ABCdef\"");
-  delay(1000);*/
 
-  /*readbuffersize = Serial1.available();
-  while(readbuffersize){
-    temp_input = Serial1.read();
-    Serial.print(temp_input);
-    readbuffersize--;
-  }*/
+  //Wait until io is Ready
+  delay(5000);
 
-  delay(60000);
-
-  Serial.println("things 3");
   readbuffersize = Serial1.available();
   while(readbuffersize){
     temp_input = Serial1.read();
@@ -176,7 +143,7 @@ void loop(){
     readbuffersize--;
   }
 
-  Serial1.print("AT+DRX?");
+  delay(45000);
 
   Serial.println("things 5");
 
@@ -202,11 +169,10 @@ void loop(){
     }
   }
 
-//  Serial1.print("AT+DRX?");
-
-//  Serial.println("things");
-
   delay(1000);
 
 //  dl_msg();*/
+}
+
+void serial_one_msg(){  
 }
