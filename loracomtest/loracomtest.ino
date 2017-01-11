@@ -6,6 +6,8 @@
 #define LED_PORT 6
 
 LDHT dht(DHTPIN, DHTTYPE);
+void serial_one_msg();
+
 
 float tempC = 0.0, Humi = 0.0;
 char temp_humi[8];
@@ -78,29 +80,7 @@ void loop(){
 
 
   Serial.println("things 1");
-  while(Serial1.available()<=0){
-    serial_delay_count++;
-    delay(1000);
-    if(serial_delay_count == 10){
-      read_flag = 0;
-      serial_delay_count = 0;
-      break;
-    }
-  }
-
-  Serial.println("things 2");
-  if(read_flag == 0){
-    read_flag = 1;
-  }else{
-    readbuffersize = Serial1.available();
-    Serial.print(readbuffersize);
-    while(readbuffersize){
-      temp_input = Serial1.read();
-      Serial.print(temp_input);
-      readbuffersize--;
-    }
-  }
-
+  serial_one_msg();
   Serial.println("End of Node response");
   delay(1000);
 
@@ -136,16 +116,6 @@ void loop(){
   //Wait until io is Ready
   delay(5000);
 
-  readbuffersize = Serial1.available();
-  while(readbuffersize){
-    temp_input = Serial1.read();
-    Serial.print(temp_input);
-    readbuffersize--;
-  }
-
-  delay(45000);
-
-  Serial.println("things 5");
 
   while(Serial1.available()<=0){
     serial_delay_count++;
@@ -161,18 +131,45 @@ void loop(){
     read_flag = 1;
   }else{
     readbuffersize = Serial1.available();
-    Serial.print(readbuffersize);
+    Serial.print("Data from serial1 size is: ");
+    Serial.println(readbuffersize);
     while(readbuffersize){
       temp_input = Serial1.read();
       Serial.print(temp_input);
       readbuffersize--;
     }
   }
+  
+  delay(45000);
 
+  Serial.println("TX relay done should show up things 5");
+  serial_one_msg();
   delay(1000);
 
 //  dl_msg();*/
 }
 
-void serial_one_msg(){  
+void serial_one_msg(){
+  while(Serial1.available()<=0){
+    serial_delay_count++;
+    delay(1000);
+    if(serial_delay_count == 10){
+      read_flag = 0;
+      serial_delay_count = 0;
+      break;
+    }
+  }
+
+  if(read_flag == 0){
+    read_flag = 1;
+  }else{
+    readbuffersize = Serial1.available();
+    Serial.print("Data from serial1 size is: ");
+    Serial.println(readbuffersize);
+    while(readbuffersize){
+      temp_input = Serial1.read();
+      Serial.print(temp_input);
+      readbuffersize--;
+    }
+  }
 }
