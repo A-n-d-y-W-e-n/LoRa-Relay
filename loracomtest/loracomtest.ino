@@ -139,7 +139,7 @@ void loop(){
       readbuffersize--;
     }
   }
-  
+
   delay(45000);
 
   Serial.println("TX relay done should show up things 5");
@@ -150,6 +150,8 @@ void loop(){
 }
 
 void serial_one_msg(){
+  String serial1_temp_reading = "";
+
   while(Serial1.available()<=0){
     serial_delay_count++;
     delay(1000);
@@ -166,10 +168,9 @@ void serial_one_msg(){
     readbuffersize = Serial1.available();
     Serial.print("Data from serial1 size is: ");
     Serial.println(readbuffersize);
-    while(readbuffersize){
-      temp_input = Serial1.read();
-      Serial.print(temp_input);
-      readbuffersize--;
+    while(Serial1.available()){
+      serial1_temp_reading = Serial1.readString();
+      Serial.print(serial1_temp_reading);
     }
   }
 }
