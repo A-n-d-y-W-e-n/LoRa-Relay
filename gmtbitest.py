@@ -27,15 +27,7 @@ mcs_data_format = {
 
 dl_test_counter = 0
 
-downlink_data = [{
-    "macAddr": "000000000500005f",
-    "data": "0000",
-    "id": "998877abcd0123",
-    "extra": {
-        "port": 2,
-        "txpara": 6
-    }
-}]
+downlink_data = [{"macAddr": "0000000005000023","data": "0023","id": "998877abcd0184", "extra": {"port": 2,"txpara": 6}}]
 
 # change this to the values from MCS web console
 DEVICE_INFO = {
@@ -53,10 +45,16 @@ def on_connect(client, userdata, flags, rc):
 
 # The callback for when a PUBLISH message is received from the server.
 def on_message(client, userdata, msg):
-    print(downlink_data[0]['data'])
+#    print(downlink_data)
     global dl_test_counter
-    downlink_data[0]['data'] = dl_test_counter
-    client.publish("GIOT-GW/DL/1C497B498D80", payload=json.dumps(downlink_data), qos=0, retain=False)
+#    downlink_data[0]['data'] = dl_test_counter
+    json_extractor = json.loads(msg.payload)
+
+    if json_extractor[0]['macAddr'] == "0000000005000023":
+        print("we published")
+        downlink_data[0]['id'] = str(int(time.time()))
+        client.publish("GIOT-GW/DL/00001c497b48db92", payload=json.dumps(downlink_data), qos=0, retain=False)
+
     dl_test_counter=dl_test_counter + 1
     # print(msg.topic+" "+str(msg.payload))
     json_extractor = json.loads(msg.payload)
@@ -64,8 +62,9 @@ def on_message(client, userdata, msg):
     # print(json_extractor[0]['macAddr'])
     # print(json_extractor[0]['data'].decode("hex"))
 
-    if json_extractor[0]['macAddr'] == "000000000500005f":
+    if json_extractor[0]['macAddr'] == "0000000005000023":
         string_value = json_extractor[0]['data'].decode("hex")
+        print("transmission_done")
         # print(string_value[1:6])
         # print(string_value[6:11])
         mcs_data_format['datapoints'][0]['values']['value'] = string_value[1:6]
@@ -78,11 +77,11 @@ def on_message(client, userdata, msg):
         #response = urllib2.urlopen(req, json.dumps(mcs_data_format))
         # print(response)
 
-client = mqtt.Client(client_id="1237788", protocol=mqtt.MQTTv31)
+client = mqtt.Client(client_id="1C497B498D81", protocol=mqtt.MQTTv31)
 client.on_connect = on_connect
 client.on_message = on_message
 client.username_pw_set("lazyengineers", password="lazyengineers")
-client.connect("104.155.21.63", port=1883, keepalive=60)
+client.connect("104.199.215.165", port=1883, keepalive=60)
 
 # Blocking call that processes network traffic, dispatches callbacks and
 # handles reconnecting.
