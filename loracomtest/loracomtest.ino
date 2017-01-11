@@ -5,8 +5,12 @@
 #define FAN_PORT 10
 #define LED_PORT 6
 
+//functions defination
 LDHT dht(DHTPIN, DHTTYPE);
+void serial_one_msg();
+void LoRa_control_activate();
 
+//Glabal valuables
 float tempC = 0.0, Humi = 0.0;
 char temp_humi[8];
 char readcharbuffer[20];
@@ -15,6 +19,9 @@ char temp_input;
 
 int serial_delay_count = 0;
 int read_flag = 1;
+
+String LoRa_DL_Data = "";
+char LoRa_Control;
 
 void setup(){
   Serial.begin(9600);
@@ -27,32 +34,6 @@ void setup(){
   Serial.print(DHTTYPE);
   Serial.println("test!");
 }
-/*
-void dl_msg(){
-  if(Serial1.read()){
-    Serial.print(Serial1.read());
-    Serial1.print("AT+DRX?");
-    if(Serial1.read() == 'led0'){
-      digitalWrite(13, LOW);
-      Serial.println("Switch LED OFF");
-    }
-
-    else if(Serial1.read() == 'led1'){
-      digitalWrite(13, HIGH);
-      Serial.println("Switch LED ON");
-    }
-
-    else if(Serial1.read() == 'fan0'){
-      digitalWrite(FAN_PORT, HIGH);
-      Serial.println("FAN OFF");
-    }
-
-    else if(Serial1.read() == 'fan1'){
-      digitalWrite(FAN_PORT, HIGH);
-      Serial.println("FAN ON");
-    }
-  }
-}*/
 
 void loop(){
 
@@ -103,7 +84,15 @@ void loop(){
   }
 
 
-  Serial.println("things 1");
+  Serial.println("Reading the mcu message on Node");
+  serial_one_msg();
+  Serial.println("End of Node response");
+  delay(1000);
+
+//Dectect there are dl packets or not if there is no message from Node
+// It means no data from dl
+// If no dl data from GW do not send AT+DRX? command or node will not send data to GW next time
+// It should be bug in MCU code
   while(Serial1.available()<=0){
     serial_delay_count++;
     delay(1000);
@@ -114,8 +103,8 @@ void loop(){
     }
   }
 
-  Serial.println("things 2");
   if(read_flag == 0){
+    Serial.println("No downlink Message available");
     read_flag = 1;
   }else{
     readbuffersize = Serial1.available();
@@ -125,60 +114,16 @@ void loop(){
       Serial.print(temp_input);
       readbuffersize--;
     }
+    //Wait until io is Ready
+    delay(5000);
+    //receiving message
+    Serial1.println("AT+DRX?");
   }
 
-  Serial.println("things 2-1");
 
+  //Wait until io is Ready
+  delay(5000);
 
-
-/*  while(Serial1.available()<=0){
-    serial_delay_count++;
-    delay(1000);
-    if(serial_delay_count == 10){
-      Serial.println("No downlink Message available");
-      read_flag = 0;
-      serial_delay_count = 0;
-      break;
-    }
-  }
-
-  if(read_flag == 0){
-    read_flag = 1;
-  }else{
-    readbuffersize = Serial1.available();
-    Serial.print(readbuffersize);
-    while(readbuffersize){
-      temp_input = Serial1.read();
-      Serial.print(temp_input);
-      readbuffersize--;
-    }
-  }
-
-  /*
-  Serial.println("Ready to Send");
-  Serial1.println("AT+DTX=11,\"12345ABCdef\"");
-  delay(1000);*/
-
-  /*readbuffersize = Serial1.available();
-  while(readbuffersize){
-    temp_input = Serial1.read();
-    Serial.print(temp_input);
-    readbuffersize--;
-  }*/
-
-  delay(60000);
-
-  Serial.println("things 3");
-  readbuffersize = Serial1.available();
-  while(readbuffersize){
-    temp_input = Serial1.read();
-    Serial.print(temp_input);
-    readbuffersize--;
-  }
-
-  Serial1.print("AT+DRX?");
-
-  Serial.println("things 5");
 
   while(Serial1.available()<=0){
     serial_delay_count++;
@@ -194,19 +139,73 @@ void loop(){
     read_flag = 1;
   }else{
     readbuffersize = Serial1.available();
-    Serial.print(readbuffersize);
-    while(readbuffersize){
-      temp_input = Serial1.read();
-      Serial.print(temp_input);
-      readbuffersize--;
+    Serial.print("Data from serial1 size is: ");
+    Serial.println(readbuffersize);
+    LoRa_DL_Data = Serial1.readStringUntil(',');
+    Serial.print(LoRa_DL_Data);
+    LoRa_Control = Serial1.read();
+    Serial.print(LoRa_Control);
+    while(Serial1.available()){
+      LoRa_DL_Data = Serial1.readString();
+      Serial.print(LoRa_DL_Data);
     }
   }
 
-//  Serial1.print("AT+DRX?");
+  // control hardware functions
+  LoRa_control_activate();
 
-//  Serial.println("things");
 
+  delay(45000);
+
+  Serial.println("TX relay done should show up things 5");
+  serial_one_msg();
   delay(1000);
 
 //  dl_msg();*/
+}
+
+void serial_one_msg(){
+  String serial1_temp_reading = "";
+
+  while(Serial1.available()<=0){
+    serial_delay_count++;
+    delay(1000);
+    if(serial_delay_count == 10){
+      read_flag = 0;
+      serial_delay_count = 0;
+      break;
+    }
+  }
+
+  if(read_flag == 0){
+    read_flag = 1;
+  }else{
+    readbuffersize = Serial1.available();
+    Serial.print("Data from serial1 size is: ");
+    Serial.println(readbuffersize);
+    while(Serial1.available()){
+      serial1_temp_reading = Serial1.readString();
+      Serial.print(serial1_temp_reading);
+    }
+  }
+}
+
+void LoRa_control_activate(){
+  if(LoRa_Control == '0'){
+    digitalWrite(LED_PORT, LOW);
+    digitalWrite(FAN_PORT, LOW);
+    Serial.println("All OFF");
+  }else if(LoRa_Control == '1'){
+    digitalWrite(LED_PORT, HIGH);
+    digitalWrite(FAN_PORT, LOW);
+    Serial.println("FAN off LED on");
+  }else if(LoRa_Control == '2'){
+    digitalWrite(LED_PORT, LOW);
+    digitalWrite(FAN_PORT, HIGH);
+    Serial.println("FAN On LED off");
+  }else if(LoRa_Control == '3'){
+    digitalWrite(LED_PORT, HIGH);
+    digitalWrite(FAN_PORT, HIGH);
+    Serial.println("All devices ON");
+  }
 }
