@@ -58,11 +58,22 @@ def on_message(client, userdata, msg):
 
     if json_extractor[0]['macAddr'] == Target_node_MAC:
         print("we published")
+        if(dl_test_counter == 0):
+            downlink_data[0]['data'] = '0000'
+        elif(dl_test_counter == 1):
+            downlink_data[0]['data'] = '1000'
+        elif(dl_test_counter == 2):
+            downlink_data[0]['data'] = '2000'
+        elif(dl_test_counter == 3):
+            downlink_data[0]['data'] = '3000'
+            dl_test_counter = 0
+
+        dl_test_counter=dl_test_counter + 1
         downlink_data[0]['macAddr'] = Target_node_MAC
         downlink_data[0]['id'] = str(int(time.time()))
         client.publish(GIOT_DLTopic_prefix + LoRa_Wan_MAC, payload=json.dumps(downlink_data), qos=0, retain=False)
+        print(downlink_data)
 
-    dl_test_counter=dl_test_counter + 1
     # print(msg.topic+" "+str(msg.payload))
     json_extractor = json.loads(msg.payload)
     # print(json_extractor[0]['channel'])
