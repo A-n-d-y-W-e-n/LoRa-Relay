@@ -7,24 +7,25 @@ import time
 import paho.mqtt.client as mqtt
 import json
 import urllib2
+import yaml
 
 GIOT_ULTopic_prefix = "GIOT-GW/UL/"
 GIOT_DLTopic_prefix = "GIOT-GW/DL/"
 LAN_MAC = "1C497B498D80"
 LoRa_Wan_MAC = "00001c497b48db92"
-Target_node_MAC = "0000000005000023"
+Target_node_MAC = "000000000500005f"
 
 
 mcs_data_format = {
     "datapoints": [
         {
-            "dataChnId": "farm_temp",
+            "dataChnId": "lora_temp",
             "values": {
                 "value": "00.00"
             }
         },
         {
-            "dataChnId": "farm_humi",
+            "dataChnId": "lora_humi",
             "values": {
                 "value": "00.00"
             }
@@ -44,8 +45,8 @@ downlink_data = [{
 
 # change this to the values from MCS web console
 DEVICE_INFO = {
-    'device_id': 'Dis819KB',
-    'device_key': 'ICdmPAER0h0dvy9r'
+    'device_id': '',
+    'device_key': ''
 }
 
 # change 'INFO' to 'WARNING' to filter info messages
@@ -110,7 +111,7 @@ def waitAndExecuteCommand(commandChannel):
 
         if len(fields) > 1:
             timeStamp, dataChannelId, commandString = fields
-            if dataChannelId == 'farm_led':
+            if dataChannelId == 'lora_led':
                 # check the value - it's either 0 or 1
                 # fan direct to binary 01
                 # (device_status & 2) for keeping original status
@@ -119,7 +120,7 @@ def waitAndExecuteCommand(commandChannel):
                 dlmsg = 1
                 downlink_data[0]['data'] = str(device_status) + '000'
                 # print downlink_data
-            elif dataChannelId == 'farm_fan':
+            elif dataChannelId == 'lora_fan':
                 # check the value - it's either 0 or 1
                 # fan direct to binary 10
                 # (device_status & 1) for keeping original status

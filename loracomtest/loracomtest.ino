@@ -71,12 +71,12 @@ void loop(){
 
     Serial.println("Ready to Send");
     Serial.print("AT+DTX=11,\"T");
-    Serial.print(dht.readHeatIndex(tempC, Humi));
+    Serial.print(tempC);
     Serial.print(temp_humi);
     Serial.println("\"");
 
     Serial1.print("AT+DTX=11,\"T");
-    Serial1.print(dht.readHeatIndex(tempC, Humi));
+    Serial1.print(tempC);
     Serial1.print(temp_humi);
     Serial1.println("\"");
 
