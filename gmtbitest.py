@@ -37,8 +37,8 @@ downlink_data = [{"macAddr": "0000000005000023","data": "0023","id": "998877abcd
 
 # change this to the values from MCS web console
 DEVICE_INFO = {
-    'device_id': 'D2vxFwNV',
-    'device_key': 'd98BVa78SaYEj8MG'
+    'device_id': '',
+    'device_key': ''
 }
 
 
