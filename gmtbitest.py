@@ -33,7 +33,7 @@ mcs_data_format = {
 
 dl_test_counter = 0
 
-downlink_data = [{"macAddr": "0000000005000023","data": "0023","id": "998877abcd0184", "extra": {"port": 2,"txpara": 6}}]
+downlink_data = [{"macAddr": "0000000005000023","data": "0023","id": "998877abcd0184", "extra": {"port": 2,"txpara": 2}}]
 
 # change this to the values from MCS web console
 DEVICE_INFO = {
