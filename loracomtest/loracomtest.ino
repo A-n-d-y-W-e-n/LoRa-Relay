@@ -192,20 +192,20 @@ void serial_one_msg(){
 
 void LoRa_control_activate(){
   if(LoRa_Control == '0'){
-    digitalWrite(LED_PORT, LOW);
-    digitalWrite(FAN_PORT, LOW);
+    digitalWrite(LED_PORT, HIGH);
+    digitalWrite(FAN_PORT, HIGH);
     Serial.println("All OFF");
   }else if(LoRa_Control == '1'){
-    digitalWrite(LED_PORT, HIGH);
-    digitalWrite(FAN_PORT, LOW);
-    Serial.println("FAN off LED on");
-  }else if(LoRa_Control == '2'){
     digitalWrite(LED_PORT, LOW);
     digitalWrite(FAN_PORT, HIGH);
+    Serial.println("FAN off LED on");
+  }else if(LoRa_Control == '2'){
+    digitalWrite(LED_PORT, HIGH);
+    digitalWrite(FAN_PORT, LOW);
     Serial.println("FAN On LED off");
   }else if(LoRa_Control == '3'){
-    digitalWrite(LED_PORT, HIGH);
-    digitalWrite(FAN_PORT, HIGH);
+    digitalWrite(LED_PORT, LOW);
+    digitalWrite(FAN_PORT, LOW);
     Serial.println("All devices ON");
   }
 }
