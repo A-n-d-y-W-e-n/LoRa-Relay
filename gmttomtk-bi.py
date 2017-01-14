@@ -7,7 +7,6 @@ import time
 import paho.mqtt.client as mqtt
 import json
 import urllib2
-import yaml
 
 GIOT_ULTopic_prefix = "GIOT-GW/UL/"
 GIOT_DLTopic_prefix = "GIOT-GW/DL/"

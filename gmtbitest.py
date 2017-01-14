@@ -12,7 +12,7 @@ GIOT_ULTopic_prefix = "GIOT-GW/UL/"
 GIOT_DLTopic_prefix = "GIOT-GW/DL/"
 LAN_MAC = "1C497B498D80"
 LoRa_Wan_MAC = "00001c497b48db92"
-Target_node_MAC = "000000000500005f"
+Target_node_MAC = "0000000005000025"
 
 mcs_data_format = {
     "datapoints": [
